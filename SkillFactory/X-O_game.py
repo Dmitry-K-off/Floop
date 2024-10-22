@@ -75,7 +75,7 @@ def play_me() -> None:
                 show_batle_field()
                 continue
             if batle_field[line_coordinate][column_coordinate] != '-': # проверка на занятость поля.
-               print('Это поле уже занято.\nПопробуйте ещё раз.')
+               print('\nЭто поле уже занято.\nПопробуйте ещё раз.')
                show_batle_field()
                continue
 
