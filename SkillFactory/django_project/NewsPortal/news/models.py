@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
+from django.utils import formats
 
 # Create your models here.
 
@@ -19,11 +20,17 @@ class Author (models.Model):
         self.rating = auth_posts_rating*3 + auth_comments_rating + users_underpostcomments_rating
         self.save()
 
+    def __str__(self):
+        return self.authorUser.username
+
 
 class Category (models.Model):
 # Модель "Категории" новостей/статей.
     category_name = models.CharField(max_length=255, unique=True) # Модель имеет единственное поле:
 # название категории. По заданию поле должно быть уникальным.
+
+    def __str__(self):
+      return self.category_name
 
 
 class Post (models.Model):
@@ -57,6 +64,15 @@ class Post (models.Model):
         # длиной 124 символа и добавляет многоточие в конце.
         return self.content[0:123] + '...'
 
+    def formated_date_time(self):
+        return formats.date_format(self.date_time, "d.m.Y | H:m")
+
+    def type_post(self):
+        return dict(self.OPTIONS)[self.al_or_ns]
+
+    def __str__(self):
+        return f'{self.date_time.strftime("%d.%m.%Y")}, {dict(self.OPTIONS)[self.al_or_ns]}: {self.headline.title()}, Автор - {self.post_author.authorUser.username}'
+
 
 class PostCategory (models.Model):
 # Промежуточная модель для связи «многие ко многим»:
@@ -81,3 +97,6 @@ class Comment (models.Model):
     def dislike(self): # Метод, который уменьшает рейтинг комментария на единицу.
         self.rating -= 1
         self.save()
+
+    def __str__(self):
+      return f'{self.text_comm[:50]}... Автор: {self.user_comm}'
