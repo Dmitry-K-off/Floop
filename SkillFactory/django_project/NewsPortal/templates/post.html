@@ -17,4 +17,17 @@ Post
 <h1>{{ post.headline|censor }}</h1>
 <h2>{{ post.formated_date_time }}</h2>
 <h3>{{ post.content|censor }}</h3>
+
+<br />
+
+<!-- Добавим кнопки для редактирования и удаления поста -->
+<button style="background-color: grey; color: white;"
+        onclick="colorFn(this)"><h7>
+    <a class="nav-link" href="/posts/{{ post.id }}/update">Редактировать пост</a></h7></button><br />
+
+<br />
+<button style="background-color: red; color: white;"
+        onclick="colorFn(this)"><h7>
+    <a class="nav-link" href="/posts/{{ post.id }}/delete">Удалить пост</a></h7></button>
+
 {% endblock content %}

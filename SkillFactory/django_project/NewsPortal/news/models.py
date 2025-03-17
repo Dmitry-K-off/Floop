@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils import formats
+from django.urls import reverse
 
 # Create your models here.
 
@@ -73,6 +74,8 @@ class Post (models.Model):
     def __str__(self):
         return f'{self.date_time.strftime("%d.%m.%Y")}, {dict(self.OPTIONS)[self.al_or_ns]}: {self.headline.title()}, Автор - {self.post_author.authorUser.username}'
 
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
 class PostCategory (models.Model):
 # Промежуточная модель для связи «многие ко многим»:
