@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -61,8 +62,11 @@ class PostDetail(DetailView):
     # Название объекта, в котором будет выбранный пользователем пост
     context_object_name = 'post'
 
+
 # Добавляем представление для создания новостей.
-class NewsCreate(CreateView):
+# Добавляем проверку на наличие права на создание новости.
+class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post')
     # Указываем форму
     form_class = PostForm
     # модель пост
@@ -78,7 +82,9 @@ class NewsCreate(CreateView):
 
 
 # Добавляем представление для создания статей.
-class ArticleCreate(CreateView):
+# Добавляем проверку на наличие права на создание статьи.
+class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post')
     # Указываем форму
     form_class = PostForm
     # модель пост
@@ -94,13 +100,17 @@ class ArticleCreate(CreateView):
 
 
 # Добавляем представление для изменения поста.
-class PostUpdate(UpdateView):
+# Добавляем проверку на наличие права на редактирование.
+class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post')
     form_class = PostForm
     model = Post
     template_name = 'post_update.html'
 
 # Представление удаляющее пост.
-class PostDelete(DeleteView):
+# Добавляем проверку на наличие права на удаление поста.
+class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post')
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')

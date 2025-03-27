@@ -21,13 +21,19 @@ Post
 <br />
 
 <!-- Добавим кнопки для редактирования и удаления поста -->
-<button style="background-color: grey; color: white;"
-        onclick="colorFn(this)"><h7>
-    <a class="nav-link" href="/posts/{{ post.id }}/update">Редактировать пост</a></h7></button><br />
-
+<button style="padding: 4px 8px; font-size: 16px; border-radius: 15px;"
+        onclick="colorFn(this)">
+    <a class="nav-link" href="/posts/{{ post.id }}/update">Редактировать пост</a>
+</button>
 <br />
-<button style="background-color: red; color: white;"
-        onclick="colorFn(this)"><h7>
-    <a class="nav-link" href="/posts/{{ post.id }}/delete">Удалить пост</a></h7></button>
+<br />
+<button style="padding: 4px 8px;
+font-size: 16px;
+border-radius: 15px;
+background-color: red;
+color: white;"
+        onclick="colorFn(this)">
+    <a class="nav-link" href="/posts/{{ post.id }}/delete">Удалить пост</a>
+</button>
 
 {% endblock content %}

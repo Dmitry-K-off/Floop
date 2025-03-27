@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-h*giq8)3v1he02&9111fyawo#xnon@4c8v8i&ya_44*(&9t4=0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -40,13 +40,27 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+
+    # добавление приложений библиотеки allauth.
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google', # Добавление стороннего сервиса для авторизации через Google.
+    'allauth.socialaccount.providers.yandex', # Добавление стороннего сервиса для авторизации через Яндекс.
+
     'news',
     'accounts',
     'fpages',
     'django_filters',
+    'sign',
+    'protect',
 ]
 
 SITE_ID = 1
+
+LOGIN_URL = '/accounts/login/'
+
+LOGIN_REDIRECT_URL = '/posts'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'NewsPortal.urls'
@@ -64,7 +79,7 @@ ROOT_URLCONF = 'NewsPortal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,6 +90,11 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 WSGI_APPLICATION = 'NewsPortal.wsgi.application'
@@ -131,3 +151,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'

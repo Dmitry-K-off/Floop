@@ -15,7 +15,7 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
    <div class="container">
-       <a class="navbar-brand" href="#">NewsPortal новости нашего городка</a>
+       <a class="navbar-brand" href="/posts/">NewsPortal новости нашего городка</a>
        <button class="navbar-toggler" type="button" data-toggle="collapse"
                data-target="#navbarResponsive"
                aria-controls="navbarResponsive" aria-expanded="false"
@@ -29,6 +29,7 @@
                        <span class="sr-only">(current)</span>
                    </a>
                </li>
+               <li class="nav-item active">
                    <a class="nav-link" href="/">Главная страница</a>
                </li>
                <li class="nav-item">
@@ -38,12 +39,6 @@
                    <a class="nav-link" href="/posts/">Последние публикации</a>
                </li>
                <li class="nav-item">
-                   <a class="nav-link" href="/posts/1">Публикация 1</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/posts/2">Публикация 2</a>
-               </li>
-               <li class="nav-item">
                    <a class="nav-link" href="/posts/article/create">Создать статью</a>
                </li>
                <li class="nav-item">
@@ -51,6 +46,15 @@
                </li>
                <li class="nav-item">
                    <a class="nav-link" href="/posts/search">Поиск публикаций</a>
+               </li>
+               <li class="nav-item">
+                   {% if user.is_authenticated %}
+                   <span style="color: white">Приветствуем {{user.first_name}}!</span>
+                   <a class="nav-link" href="/accounts/logout/">Выход</a>
+                   {% else %}
+                   <a class="nav-link" href="/accounts/login/">Вход</a>
+                   <a class="nav-link" href="/accounts/signup/">Регистрация</a>
+                   {% endif %}
                </li>
            </ul>
        </div>
