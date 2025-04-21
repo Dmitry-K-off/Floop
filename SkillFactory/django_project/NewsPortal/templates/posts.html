@@ -25,6 +25,7 @@ Post
             <tr>
                 <th width="100" height="100">Дата</th>
                 <th>Тип поста</th>
+                <th>Категория</th>
                 <th>Заголовок</th>
                 <th>Превью</th>
                 <th>Автор</th>
@@ -33,6 +34,11 @@ Post
             <tr>
                 <td width="300">{{ post.formated_date_time }}</td>
                 <td width="150">{{ post.type_post }}</td>
+                <td width="150">
+                    {% for category in post.post_category.all %}
+                        <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+                    {% endfor %}
+                </td>
                 <td width="300"><h5><a href="{{ post.id }}">{{ post.headline|censor }}</a></h5></td>
                 <td width="500"><h5>{{ post.content|truncatewords:20|censor }}</h5></td>
                 <td width="100">{{ post.post_author }}</td>

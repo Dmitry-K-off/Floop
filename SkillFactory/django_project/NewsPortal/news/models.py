@@ -27,8 +27,11 @@ class Author (models.Model):
 
 class Category (models.Model):
 # Модель "Категории" новостей/статей.
-    category_name = models.CharField(max_length=255, unique=True) # Модель имеет единственное поле:
+    category_name = models.CharField(max_length=255, unique=True) # Модель имеет поле:
 # название категории. По заданию поле должно быть уникальным.
+
+    # Поле subscribers создано для реализации возможности подписки пользователей на конкретные категрии.
+    subscribers = models.ManyToManyField(User, blank=True, null=True, related_name='categories')
 
     def __str__(self):
       return self.category_name
@@ -70,6 +73,7 @@ class Post (models.Model):
 
     def type_post(self):
         return dict(self.OPTIONS)[self.al_or_ns]
+
 
     def __str__(self):
         return f'{self.date_time.strftime("%d.%m.%Y")}, {dict(self.OPTIONS)[self.al_or_ns]}: {self.headline.title()}, Автор - {self.post_author.authorUser.username}'

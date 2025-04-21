@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h2>Страница авторизованного пользователя {{request.user.username}}</h2>
+
+<div> Здесь может содержаться персональная информация для каждого пользователя </div>
+
+<br />
+
+<form method="post" action="{% url 'logout' %}">
+{% csrf_token %}
+    <button type="submit" style="padding: 4px 8px; font-size: 16px; border-radius: 15px">Выйти</button>
+</form>
+
+
+
+{% endblock %}

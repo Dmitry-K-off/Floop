@@ -5,16 +5,22 @@ from .models import Post
 # Создаём формы для создания и редактирования публикаций
 
 class PostForm(forms.ModelForm):
-    content = forms.CharField(min_length=20)
+    content = forms.CharField(widget=forms.Textarea, min_length=20)
+
     class Meta:
         model = Post
         fields = [
             'post_author',
             'post_category',
-#            'al_or_ns',
             'headline',
             'content',
         ]
+
+        labels = {
+            'post_author': 'Автор',
+            'post_category': 'Категория',
+            'headline': 'Название',
+        }
 
     def clean(self):
         cleaned_data = super().clean()

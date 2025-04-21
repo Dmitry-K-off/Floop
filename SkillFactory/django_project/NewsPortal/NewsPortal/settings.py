@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +36,7 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'django_apscheduler', # Приложение для выполнения периодических задач
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,7 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google', # Добавление стороннего сервиса для авторизации через Google.
     'allauth.socialaccount.providers.yandex', # Добавление стороннего сервиса для авторизации через Яндекс.
 
-    'news',
+    'news.apps.NewsConfig',
     'accounts',
     'fpages',
     'django_filters',
@@ -158,4 +163,21 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+#ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+#new
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'  # Адрес сервера Яндекс-почты.
+EMAIL_PORT = 465  # порт smtp сервера.
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Имя пользователя сохранено в переменной окружения.
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # пароль от почты также сохранён в переменную окружения.
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER+'@yandex.ru'
+EMAIL_USE_SSL = True  # Яндекс использует ssl.
+
+SITE_URL = 'http://127.0.0.1:8000'
+
+# формат даты, которую будет воспринимать задачник
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# если задача не выполняется за 25 секунд, то она автоматически снимается.
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds

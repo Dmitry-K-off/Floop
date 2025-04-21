@@ -1,10 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm
+from .utils import maximum_post_amount, MAXIMUM_POST_AMOUNT
+
 
 # Create your views here.
 
@@ -75,6 +79,14 @@ class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     # Шаблон, в котором используется форма.
     template_name = 'news_create.html'
 
+    # new
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if not maximum_post_amount(request) < MAXIMUM_POST_AMOUNT:
+            return redirect(reverse('post_limit'))
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         post = form.save(commit=False)
         post.al_or_ns = 'NS'
@@ -93,6 +105,14 @@ class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     # Шаблон, в котором используется форма.
     template_name = 'article_create.html'
 
+    # new
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if not maximum_post_amount(request) < MAXIMUM_POST_AMOUNT:
+            return redirect(reverse('post_limit'))
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         post = form.save(commit=False)
         post.al_or_ns = 'AL'
@@ -107,10 +127,47 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'post_update.html'
 
-# Представление удаляющее пост.
+# Представление, удаляющее пост.
 # Добавляем проверку на наличие права на удаление поста.
 class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     permission_required = ('news.delete_post')
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
+
+# Представление, позволяющее сформировать список публикаций, в выбранной категории
+class CategoryListView(PostList):
+    model = Post
+    template_name = 'category_list.html'
+    context_object_name = 'category_news_list'
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(post_category=self.category)
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+# Представление, позволяющее подписаться на категорию
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+    message = 'Вы успешно подписались на рассылку новостей в категории'
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
+
+# Представление, позволяющее отписаться от категории
+@login_required
+def unsubscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.remove(user)
+    message = 'Вы отписались от рассылки новостей в категории'
+    return render(request, 'unsubscribe.html', {'category': category, 'message': message})
+
+def post_limit(request):
+    return render(request, 'post_limit.html')

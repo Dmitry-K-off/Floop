@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h2> Регистрация </h2>
+<form method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Продолжить" style="padding: 4px 8px; font-size: 16px; border-radius: 15px">
+</form>
+{% endblock %}
