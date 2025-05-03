@@ -165,7 +165,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 #ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-#new
+# Настройки почтового сервера.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'  # Адрес сервера Яндекс-почты.
 EMAIL_PORT = 465  # порт smtp сервера.
@@ -180,4 +180,10 @@ SITE_URL = 'http://127.0.0.1:8000'
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 # если задача не выполняется за 25 секунд, то она автоматически снимается.
-APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Секунд
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL') # Значение сохранено в переменной окружения.
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND') # Значение сохранено в переменной окружения.
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
