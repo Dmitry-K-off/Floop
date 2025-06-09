@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
@@ -23,6 +24,9 @@ class Author (models.Model):
 
     def __str__(self):
         return self.authorUser.username
+
+    def get_name(self):
+        return f'{self.authorUser.first_name} {self.authorUser.last_name}'
 
 
 class Category (models.Model):
@@ -74,12 +78,18 @@ class Post (models.Model):
     def type_post(self):
         return dict(self.OPTIONS)[self.al_or_ns]
 
-
     def __str__(self):
-        return f'{self.date_time.strftime("%d.%m.%Y")}, {dict(self.OPTIONS)[self.al_or_ns]}: {self.headline.title()}, Автор - {self.post_author.authorUser.username}'
+        return f'{self.date_time.strftime("%d.%m.%Y %H:%M")}, {dict(self.OPTIONS)[self.al_or_ns]}: {self.headline.title()}, Автор - {self.post_author.authorUser.username}'
+
+    def get_author(self):
+        return f'{self.post_author.authorUser.first_name} {self.post_author.authorUser.last_name}'
 
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.id)])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'post-{self.pk}') # затем удаляем его из кэша, чтобы сбросить его
 
 class PostCategory (models.Model):
 # Промежуточная модель для связи «многие ко многим»:
@@ -104,6 +114,9 @@ class Comment (models.Model):
     def dislike(self): # Метод, который уменьшает рейтинг комментария на единицу.
         self.rating -= 1
         self.save()
+
+    def get_name(self):
+        return f'{self.user_comm.first_name} {self.user_comm.last_name}'
 
     def __str__(self):
       return f'{self.text_comm[:50]}... Автор: {self.user_comm}'

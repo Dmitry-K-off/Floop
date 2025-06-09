@@ -8,6 +8,8 @@
         <title>NewsPortal новости нашего городка</title>
 
         {% load static %}
+        <!-- Добавляем кэширование шаблона-->
+        {% load cache %}
         <!-- Core theme css (incledes Bootstrap)-->
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     </head>
@@ -15,7 +17,12 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
    <div class="container">
-       <a class="navbar-brand" href="/posts/">NewsPortal новости нашего городка</a>
+       <a class="navbar-brand" href="/posts/">
+           {% cache 300 barbrand %} <!-- Кэшируем заголовок панели-->
+               NewsPortal новости нашего городка
+            {% endcache %}
+       </a>
+
        <button class="navbar-toggler" type="button" data-toggle="collapse"
                data-target="#navbarResponsive"
                aria-controls="navbarResponsive" aria-expanded="false"
@@ -23,40 +30,37 @@
            <span class="navbar-toggler-icon"></span>
        </button>
        <div class="collapse navbar-collapse" id="navbarResponsive">
-           <ul class="navbar-nav ml-auto">
-               <li class="nav-item active">
-                   <a class="nav-link" href="#">Home
-                       <span class="sr-only">(current)</span>
-                   </a>
-               </li>
-               <li class="nav-item active">
-                   <a class="nav-link" href="/">Главная страница</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/about/">О нас</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/posts/">Последние публикации</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/posts/article/create">Создать статью</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/posts/news/create">Создать новость</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/posts/search">Поиск публикаций</a>
-               </li>
-               <li class="nav-item">
-                   {% if user.is_authenticated %}
-                   <span style="color: white">Приветствуем {{user.first_name}}!</span>
-                   <a class="nav-link" href="/accounts/logout/">Выход</a>
-                   {% else %}
-                   <a class="nav-link" href="/accounts/login/">Вход</a>
-                   <a class="nav-link" href="/accounts/signup/">Регистрация</a>
-                   {% endif %}
-               </li>
-           </ul>
+           {% cache 300 sidebar %} <!-- Кэшируем панель-->
+               <ul class="navbar-nav ml-auto">
+                   <li class="nav-item active">
+                       <a class="nav-link" href="/">Главная страница</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/about/">О нас</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/posts/">Последние публикации</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/posts/article/create">Создать статью</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/posts/news/create">Создать новость</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/posts/search">Поиск публикаций</a>
+                   </li>
+                   <li class="nav-item">
+                       {% if user.is_authenticated %}
+                       <span style="color: white">Приветствуем {{user.username}}!</span>
+                       <a class="nav-link" href="/accounts/logout/">Выход</a>
+                       {% else %}
+                       <a class="nav-link" href="/accounts/login/">Вход</a>
+                       <a class="nav-link" href="/accounts/signup/">Регистрация</a>
+                       {% endif %}
+                   </li>
+               </ul>
+           {% endcache %}
        </div>
    </div>
 </nav>

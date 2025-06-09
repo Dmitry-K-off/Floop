@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -39,8 +40,6 @@ class PostSearch(ListView):
     context_object_name = 'posts'
     paginate_by = 10  # Указаем количество записей на странице
 
-
-
     def get_queryset(self):
         # Получаем обычный запрос
         queryset = super().get_queryset()
@@ -64,6 +63,13 @@ class PostDetail(DetailView):
     model = Post
     # Используем другой шаблон — post.html
     template_name = 'post.html'
+    queryset = Post.objects.all()
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
     # Название объекта, в котором будет выбранный пользователем пост
     context_object_name = 'post'
 

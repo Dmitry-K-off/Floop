@@ -189,3 +189,157 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND') # Значение с
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+
+"""
+Настройка кэширования через внешний сервер Redis/
+
+""" # Словарь CACHES с настройками кеширования.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("LOCATION"), # Данные сохранены в переменную окружения.
+    }
+}
+
+"""
+Добавляем настройки логгирования.
+"""
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        # console_debug: для вывода в консоль сообщений уровня DEBUG и выше.
+        'console_debug': {
+            'format': '{asctime} {levelname} {message}',
+            'style': '{',
+        },
+        # console_warning: для вывода в консоль сообщений уровня WARNING и выше с указанием пути.
+        'console_warning': {
+            'format': '{asctime} {levelname} {pathname} {message}',
+            'style': '{',
+        },
+        # console_error: для вывода в консоль сообщений уровня ERROR и выше с указанием пути и стэка ошибки.
+        'console_error': {
+            'format': '{asctime} {levelname} {pathname} {message}\n{exc_info}',
+            'style': '{',
+        },
+        # file_general: для записи в файл general.log сообщений уровня INFO и выше.
+        'file_general': {
+            'format': '{asctime} {levelname} {module} {message}',
+            'style': '{',
+        },
+        # file_errors: для записи в файл errors.log сообщений уровня ERROR и выше с указанием пути и стэка ошибки.
+        'file_errors': {
+            'format': '{asctime} {levelname} {pathname} {message}\n{exc_info}',
+            'style': '{',
+        },
+        # file_security: для записи в файл security.log сообщений, связанных с безопасностью.
+        'file_security': {
+            'format': '{asctime} {levelname} {module} {message}',
+            'style': '{',
+        },
+        # mail: для отправки сообщений на почту.
+        'mail': {
+            'format': '{asctime} {levelname} {pathname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        # require_debug_true: фильтр для вывода в консоль только при DEBUG = True.
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',  # Фильтр для DEBUG = True
+        },
+        # require_debug_false: фильтр для записи в файл general.log и отправки на почту только при DEBUG = False.
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',  # Фильтр для DEBUG = False
+        },
+    },
+    'handlers': {
+        # Обработчики (handlers) console, console_warning, console_error:
+        # для вывода в консоль с разными уровнями и форматами.
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_debug',
+            'filters': ['require_debug_true'],
+        },
+        'console_warning': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_warning',
+            'filters': ['require_debug_true'],
+        },
+        'console_error': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_error',
+            'filters': ['require_debug_true'],
+        },
+        # Обработчики (handlers) file_general, file_errors, file_security:
+        # для записи в соответствующие файлы.
+        'file_general': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR /'logs/general.log',
+            'formatter': 'file_general',
+            'filters': ['require_debug_false'],
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR /'logs/errors.log',
+            'formatter': 'file_errors',
+        },
+        'file_security': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR /'logs/security.log',
+            'formatter': 'file_security',
+        },
+        # Обработчик (handler) mail_admins:
+        # для отправки сообщений на почту.
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'mail',
+            'filters': ['require_debug_false'],
+        },
+    },
+    'loggers': {
+        # django: основной регистратор (логгер), который обрабатывает все сообщения Django.
+        'django': {
+            'handlers': ['console', 'console_warning', 'console_error', 'file_general'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        # django.request, django.server, django.template, django.db.backends:
+        # логгеры для обработки ошибок в соответствующих модулях.
+        'django.request': {
+            'handlers': ['file_errors', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['file_errors', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        # django.security: логгер для обработки сообщений, связанных с безопасностью.
+        'django.security': {
+            'handlers': ['file_security'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

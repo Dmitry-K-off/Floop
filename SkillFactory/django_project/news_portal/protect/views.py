@@ -1,5 +1,6 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.cache import cache_page # Импорт для кэширования.
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'protect/index.html'
