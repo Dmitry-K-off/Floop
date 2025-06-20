@@ -1,11 +1,18 @@
+from lib2to3.fixes.fix_input import context
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import gettext as _
 from django.urls import reverse_lazy, reverse
+from django.views import View
+from django.http.response import HttpResponse
+from django.utils.translation import activate, get_supported_language_variant, get_language_from_request
+from django.utils import timezone
+import pytz
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
-from .models import Post, Category
+from .models import Author, Post, Category
 from .filters import PostFilter
 from .forms import PostForm
 from .tasks import send_email_on_post_create
@@ -14,7 +21,33 @@ from .utils import maximum_post_amount, MAXIMUM_POST_AMOUNT
 
 # Create your views here.
 
-class PostList (ListView):
+
+class Index(View):
+    def get(self, request):
+        current_time = timezone.now()
+        models = Post.objects.all()
+
+        context = {
+            'models': models,
+            'current_time': current_time,
+            'timezones': pytz.common_timezones,
+            'selected_timezone': request.session.get('django_timezone'),
+        }
+
+        return render(request, 'protect/index.html', context)
+
+    def post(self, request):
+        timezone_str = request.POST.get('timezone')
+
+        if timezone_str and timezone_str in pytz.common_timezones:
+            request.session['django_timezone'] = timezone_str
+        else:
+            request.session['django_timezone'] = timezone.get_default_timezone_name()
+
+        return redirect('/')
+
+
+class PostList(ListView):
     # Указываем модель, объекты которой мы будем выводить
     model = Post
     # Поле, которое будет использоваться для сортировки объектов
@@ -26,6 +59,27 @@ class PostList (ListView):
     # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'posts'
     paginate_by = 10  # Указаем количество записей на странице
+
+    # # testtesttest
+    # def get(self, request):
+    #     current_time = timezone.now()
+    #
+    #     # .  Translators: This message appears on the home page only
+    #     models = Post.objects.all()
+    #     context = {
+    #         'models': models,
+    #         'current_time': timezone.now(),
+    #         'timezones': pytz.common_timezones  # добавляем в контекст все доступные часовые пояса
+    #     }
+    #
+    #     return HttpResponse(render(request, 'posts.html', context))
+    #
+    # #  по пост-запросу будем добавлять в сессию часовой пояс, который и будет обрабатываться написанным нами ранее middleware
+    # def post(self, request):
+    #     request.session['django_timezone'] = request.POST['timezone']
+    #     return redirect('/posts')
+    # # testtesttest
+
 
 class PostSearch(ListView):
     # Указываем модель, объекты которой мы будем выводить

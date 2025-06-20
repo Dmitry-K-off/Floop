@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Post
@@ -17,9 +18,9 @@ class PostForm(forms.ModelForm):
         ]
 
         labels = {
-            'post_author': 'Автор',
-            'post_category': 'Категория',
-            'headline': 'Название',
+            'post_author': _('Автор'),
+            'post_category': _('Категория'),
+            'headline': _('Название'),
         }
 
     def clean(self):

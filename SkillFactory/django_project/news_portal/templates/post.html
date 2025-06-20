@@ -1,5 +1,6 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
 
 {% load custom_filters %}
 
@@ -23,7 +24,7 @@ Post
 <!-- Добавим кнопки для редактирования и удаления поста -->
 <button style="padding: 4px 8px; font-size: 16px; border-radius: 15px;"
         onclick="colorFn(this)">
-    <a class="nav-link" href="/posts/{{ post.id }}/update">Редактировать пост</a>
+    <a class="nav-link" href="/posts/{{ post.id }}/update">{% trans "Редактировать пост" %}</a>
 </button>
 <br />
 <br />
@@ -33,7 +34,7 @@ border-radius: 15px;
 background-color: red;
 color: white;"
         onclick="colorFn(this)">
-    <a class="nav-link" href="/posts/{{ post.id }}/delete">Удалить пост</a>
+    <a class="nav-link" href="/posts/{{ post.id }}/delete">{% trans "Удалить пост" %}</a>
 </button>
 
 {% endblock content %}

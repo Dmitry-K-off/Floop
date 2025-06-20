@@ -10,7 +10,7 @@ urlpatterns = [
    # Т.к. наше объявленное представление является классом,
    # а Django ожидает функцию, нам надо представить этот класс в виде view.
    # Для этого вызываем метод as_view.
-   path('', cache_page(60*5)(PostList.as_view()), name='post_list'),
+   path('', cache_page(10)(PostList.as_view()), name='post_list'),
    # pk — это первичный ключ объекта Post, который будет выводиться у нас в шаблон
    # int — указывает на то, что принимаются только целочисленные значения
    path('<int:pk>', PostDetail.as_view(), name='post_detail'),
@@ -23,7 +23,7 @@ urlpatterns = [
    path('search/', cache_page(60*5)(PostSearch.as_view()), name='posts_search'),
 
    # Путь к списку статей по выбранной категории
-   path('categories/<int:pk>', cache_page(60*5)(CategoryListView.as_view()), name='category_list'),
+   path('categories/<int:pk>', cache_page(10)(CategoryListView.as_view()), name='category_list'),
    # Путь к странице с сообщением об успешной пдписке на категорию
    path('categories/<int:pk>/subscribe', subscribe, name='subscribe'),
    # Путь к странице с сообщением об отписке от категории

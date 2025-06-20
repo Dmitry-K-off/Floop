@@ -1,6 +1,7 @@
 <!--  Шаблон для страницы поиска -->
 
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
 
 {% load custom_filters %}
 
@@ -12,7 +13,7 @@ Post
 
 <!-- В контенте на странице мы выводим все новости -->
 {% block content %}
-    <h1>Поиск</h1>
+    <h1>{% trans "Поиск" %}</h1>
 
 
 {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
@@ -26,18 +27,18 @@ Post
 
 
     <hr size="10" color="#000000">
-<h2><span style="text-decoration: underline;">Количество постов {{posts|length}}</span></h2>
+<h2><span style="text-decoration: underline;">{% trans "Количество постов" %} {{posts|length}}</span></h2>
 
 <!-- Создание таблицы новостей, выводящей последние новости в хронологическом порядке, начиная с последней новости. -->
     {% if posts %}
         <table width="1500">
             <tr>
-                <th width="100" height="100">Дата</th>
-                <th>Тип поста</th>
-                <th>Категория</th>
-                <th>Заголовок</th>
-                <th>Превью</th>
-                <th>Автор</th>
+                <th width="100" height="100">{% trans "Дата" %}</th>
+                <th>{% trans "Тип поста" %}</th>
+                <th>{% trans "Категория" %}</th>
+                <th>{% trans "Заголовок" %}</th>
+                <th>{% trans "Превью" %}</th>
+                <th>{% trans "Автор" %}</th>
             </tr>
             {% for post in posts %}
             <tr>
@@ -55,7 +56,7 @@ Post
             {% endfor %}
         </table>
     {% else %}
-        <h2>Новостей пока нет!</h2>
+        <h2>{% trans "Новостей пока нет!" %}</h2>
     {% endif %}
 
 
@@ -63,7 +64,7 @@ Post
 
    {# Информация о предыдущих страницах #}
    {% if page_obj.has_previous %}
-       <a href="?page=1">К первой странице</a>
+       <a href="?page=1">{% trans "К первой странице" %}</a>
        {% if page_obj.previous_page_number != 1 %}
            ...
            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
@@ -78,7 +79,7 @@ Post
        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
        {% if paginator.num_pages != page_obj.next_page_number %}
            ...
-           <a href="?page={{ page_obj.paginator.num_pages }}">к последней странице</a>
+           <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "к последней странице" %}</a>
        {% endif %}
    {% endif %}
 

@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation', # Приложение для перевода моделей
     'django_apscheduler', # Приложение для выполнения периодических задач
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,6 +71,7 @@ LOGIN_REDIRECT_URL = '/posts'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -77,6 +79,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'news.middlewares.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'news_portal.urls'
@@ -103,6 +106,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 WSGI_APPLICATION = 'news_portal.wsgi.application'
+
+LANGUAGES = [
+    ('en-us', 'English'),
+    ('ru', 'Русский'),
+]
 
 
 # Database
@@ -138,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Asia/Yekaterinburg'
 
@@ -146,6 +154,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+# New
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR / 'locale')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

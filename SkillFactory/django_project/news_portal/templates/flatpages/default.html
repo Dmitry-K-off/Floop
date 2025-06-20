@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
+{% load i18n %} <!-- Загружаем теги с переводами, без этой строки ничего не будет работать -->
+{% load tz %}
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>NewsPortal новости нашего городка</title>
+        <title>{% trans "NewsPortal | Новости нашего городка" %}</title>
 
         {% load static %}
         <!-- Добавляем кэширование шаблона-->
@@ -17,9 +20,10 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
    <div class="container">
+
        <a class="navbar-brand" href="/posts/">
-           {% cache 300 barbrand %} <!-- Кэшируем заголовок панели-->
-               NewsPortal новости нашего городка
+           {% cache 10 barbrand %} <!-- Кэшируем заголовок панели-->
+               {% trans "NewsPortal | Новости нашего городка" %}
             {% endcache %}
        </a>
 
@@ -30,40 +34,59 @@
            <span class="navbar-toggler-icon"></span>
        </button>
        <div class="collapse navbar-collapse" id="navbarResponsive">
-           {% cache 300 sidebar %} <!-- Кэшируем панель-->
+           {% cache 10 sidebar %} <!-- Кэшируем панель-->
                <ul class="navbar-nav ml-auto">
                    <li class="nav-item active">
-                       <a class="nav-link" href="/">Главная страница</a>
+                       <a class="nav-link" href="/">{% trans "Главная страница" %}</a>
                    </li>
                    <li class="nav-item">
-                       <a class="nav-link" href="/about/">О нас</a>
+                       <a class="nav-link" href="/about/">{% trans "О нас" %}</a>
                    </li>
                    <li class="nav-item">
-                       <a class="nav-link" href="/posts/">Последние публикации</a>
+                       <a class="nav-link" href="/posts/">{% trans "Последние публикации" %}</a>
                    </li>
                    <li class="nav-item">
-                       <a class="nav-link" href="/posts/article/create">Создать статью</a>
+                       <a class="nav-link" href="/posts/article/create">{% trans "Создать статью" %}</a>
                    </li>
                    <li class="nav-item">
-                       <a class="nav-link" href="/posts/news/create">Создать новость</a>
+                       <a class="nav-link" href="/posts/news/create">{% trans "Создать новость" %}</a>
                    </li>
                    <li class="nav-item">
-                       <a class="nav-link" href="/posts/search">Поиск публикаций</a>
+                       <a class="nav-link" href="/posts/search">{% trans "Поиск публикаций" %}</a>
                    </li>
                    <li class="nav-item">
                        {% if user.is_authenticated %}
-                       <span style="color: white">Приветствуем {{user.username}}!</span>
-                       <a class="nav-link" href="/accounts/logout/">Выход</a>
+                       <span style="color: white">{% trans "Приветствуем" %} {{user.username}}!</span>
+                       <a class="nav-link" href="/accounts/logout/">{% trans "Выход" %}</a>
                        {% else %}
-                       <a class="nav-link" href="/accounts/login/">Вход</a>
-                       <a class="nav-link" href="/accounts/signup/">Регистрация</a>
+                       <a class="nav-link" href="/accounts/login/">{% trans "Вход" %}</a>
+                       <a class="nav-link" href="/accounts/signup/">{% trans "Регистрация" %}</a>
                        {% endif %}
                    </li>
+                   {% endcache %}
+
+
+                   <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %} <!-- Не забываем по csrf_token для POST запросов -->
+                       <input type="hidden" name="next" value="{{ redirect_to }}">
+
+                       <select name="language" id="">
+                           {% get_available_languages as LANGUAGES %} <!-- получаем языки -->
+                           {% get_language_info_list for LANGUAGES as languages %} <!-- Помещаем их в список languages -->
+                           {% get_current_language as LANGUAGE_CODE %}
+                           {% for language in languages %} <!-- Итерируясь по списку, выводим их название на языке пользователя и код -->
+                               <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
+                                   {{ language.name_local }} - {{ language.code }}
+                               </option>
+                           {% endfor %}
+                       </select>
+                       <input type="submit" value="set">
+                   </form>
+
                </ul>
-           {% endcache %}
        </div>
    </div>
 </nav>
+
         <!-- Page content-->
         <div class="container">
    <div class="row">
@@ -74,6 +97,5 @@
        </div>
    </div>
 </div>
-
     </body>
 </html>

@@ -14,13 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
+    path('i18n', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', include('protect.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
@@ -28,3 +28,7 @@ urlpatterns = [
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),
 ]
+
+# urlpatterns += i18n_patterns(
+#     path('pages/', include('django.contrib.flatpages.url'))
+#     )

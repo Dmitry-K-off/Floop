@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils import formats
+from django.utils.translation import gettext as _
 from django.urls import reverse
+
 
 # Create your models here.
 
@@ -56,7 +58,7 @@ class Post (models.Model):
     date_time = models.DateTimeField(auto_now_add=True) # автоматически добавляемая дата и время создания;
     post_category = models.ManyToManyField(Category, through='PostCategory') # связь «многие ко многим»
 # с моделью Category (с дополнительной моделью PostCategory);
-    headline = models.CharField(max_length=255) # заголовок статьи/новости;
+    headline = models.CharField(max_length=255, help_text=_('Enter your headline')) # заголовок статьи/новости;
     content = models.TextField() # текст статьи/новости;
     rating = models.IntegerField(default=0) # рейтинг статьи/новости;
 

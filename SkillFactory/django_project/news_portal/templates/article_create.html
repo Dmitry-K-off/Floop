@@ -1,9 +1,10 @@
 <!--  Шаблон для страницы создания статьи -->
 
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
 
 {% block content %}
-<h1>Создать статью</h1>
+<h1>{% trans "Создать статью" %}</h1>
 <hr>
 <form action="" method="post">
     {% csrf_token %}
