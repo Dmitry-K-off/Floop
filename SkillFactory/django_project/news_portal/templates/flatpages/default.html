@@ -15,8 +15,15 @@
         {% load cache %}
         <!-- Core theme css (incledes Bootstrap)-->
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+
+        <style>
+            body {background-color:
+            {% if current_time.hour >= 19 or current_time.hour <= 7 %} #CCCCCC
+            {% else %} #F0F8FF {% endif %};
+            }
+        </style>
     </head>
-    <body style="background-color: #CCCCCC;">
+    <body>
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
    <div class="container">

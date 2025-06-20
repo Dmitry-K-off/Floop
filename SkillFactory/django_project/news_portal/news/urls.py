@@ -20,7 +20,7 @@ urlpatterns = [
    path('post/limit_reached/', post_limit, name='post_limit'),
    path('<int:pk>/update/', PostUpdate.as_view(), name='post_update'),
    path('<int:pk>/delete/', PostDelete.as_view(), name='post_delete'),
-   path('search/', cache_page(60*5)(PostSearch.as_view()), name='posts_search'),
+   path('search/', cache_page(10)(PostSearch.as_view()), name='posts_search'),
 
    # Путь к списку статей по выбранной категории
    path('categories/<int:pk>', cache_page(10)(CategoryListView.as_view()), name='category_list'),
