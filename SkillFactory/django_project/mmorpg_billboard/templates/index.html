@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Бокс с категориями -->
+        <div class="col-md-3">
+            <div class="category-box">
+                <h2>Категории объявлений</h2>
+                <ul class="list-group">
+                    {% for category in categories %}
+                    <li class="list-group-item">
+                        <a href="{% url 'category_announcements' category_id=category.pk %}">
+                        <h3>{{ category.name }}</h3></a>
+                        <p>Количество объявлений: {{ category.announcement_set.count }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Бокс с объявлениями -->
+        <div class="col-md-9">
+            <h2>Последние объявления</h2>
+            <div class="announcement-list">
+                {% for announcement in latest_announcements %}
+                <div class="announcement">
+                    <h3>
+                        <a href="{% url 'announcement_detail' announcement.pk %}">{{ announcement.title }}</a>
+                    </h3>
+                    <p>{{ announcement.content|truncatewords:20 }}</p>
+                    {% if announcement.images %}
+                        <img src="{{ announcement.images.url }}" alt="Изображение">
+                    {% endif %}
+                    {% if announcement.videos %}
+                        <video controls width="640" height="360">
+                        <source src="{{ announcement.videos.url }}" type='video/mp4'>
+                        <source src="{{ announcement.videos.url }}" type='video/webm'>
+                        <source src="{{ announcement.videos.url }}" type='video/ogg'>
+                        <source src="{{ announcement.videos.url }}" type='video/mov'>
+                        Ваш браузер не поддерживает воспроизведение видео.
+                        </video>
+                    {% endif %}
+                    <p>Автор: {{ announcement.user.username }}</p>
+                    <p>Дата: {{ announcement.created_at }}</p>
+                </div>
+                {% empty %}
+                <p>Нет объявлений</p>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация -->
+            <div class="pagination">
+                {% if latest_announcements.has_previous %}
+                <a href="?page={{ latest_announcements.previous_page_number }}">← Предыдущая</a>
+                {% endif %}
+
+                Страница {{ latest_announcements.number }} из {{ latest_announcements.paginator.num_pages }}
+
+                {% if latest_announcements.has_next %}
+                <a href="?page={{ latest_announcements.next_page_number }}">Следующая →</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

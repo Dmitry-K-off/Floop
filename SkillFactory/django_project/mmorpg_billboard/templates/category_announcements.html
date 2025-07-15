@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Объявления категории: {{ category.name }}</h2>
+
+{% if page_obj.object_list %}
+    <div class="announcements-list">
+        {% for announcement in page_obj %}
+            <div class="announcement">
+                <h3><a href="{% url 'announcement_detail' pk=announcement.pk %}">{{ announcement.title }}</a></h3>
+                <p>{{ announcement.content|truncatewords:20 }}</p>
+                <p>Автор: {{ announcement.user.username }}</p>
+                <p>Дата: {{ announcement.created_at }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+        {% endif %}
+
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+        {% endif %}
+    </div>
+{% else %}
+    <p>В этой категории пока нет объявлений</p>
+{% endif %}
+{% endblock %}
