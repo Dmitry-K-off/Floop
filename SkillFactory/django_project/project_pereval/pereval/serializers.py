@@ -27,19 +27,13 @@ class PerevalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PerevalAdded
-        fields = [
-            'beautytitle', 'title', 'other_titles', 'connect',
-            'user', 'coords', 'area',
-            'winter_level', 'summer_level', 'autumn_level', 'spring_level',
-            'images'
-        ]
+        fields = '__all__'
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         coords_data = validated_data.pop('coords')
         images_data = validated_data.pop('images', [])
 
-        # Проверка существующего пользователя
         user, _ = User.objects.get_or_create(email=user_data['email'], defaults=user_data)
         coords = Coords.objects.create(**coords_data)
 
@@ -54,3 +48,17 @@ class PerevalSerializer(serializers.ModelSerializer):
             PerevalImage.objects.create(pereval=pereval, **image_data)
 
         return pereval
+
+    def update(self, instance, validated_data):
+        coords_data = validated_data.pop('coords', None)
+        if coords_data:
+            for attr, value in coords_data.items():
+                setattr(instance.coords, attr, value)
+            instance.coords.save()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        validated_data.pop('images', None)
+        return instance
