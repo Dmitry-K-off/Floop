@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&5f@ie=up%6be_j+^5==w$u17^+@hvkjj^k!jgg1x_fx(td1sj'
