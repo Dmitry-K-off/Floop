@@ -122,12 +122,12 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'My API',
-    'DESCRIPTION': 'Описание вашего API',
+    'TITLE': 'Project_pereval API',
+    'DESCRIPTION': 'API для добавления горных перевало в базу данных ФСТР',
     'VERSION': '1.0.0',
     'CONTACT': {
-        'name': 'Разработчик',
-        'email': 'developer@example.com',
+        'name': 'Дмитрий Кузнецов',
+        'email': 'dimon1734@yandex.ru',
     },
     'TAGS': [
         {'name': 'tasks', 'description': 'Управление задачами'},
